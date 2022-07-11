@@ -6,10 +6,12 @@
 \usage{
 TestFunctionalForm(
   DF = NULL,
-  yvar,
-  tvar,
-  treatmentvar,
+  idvar = "id",
+  yvar = "output",
+  tvar = "time",
+  treatmentvar = "treatment group",
   nbins = 100,
+  nboot = 1000,
   starting_year = NULL,
   ending_year = NULL
 )
@@ -17,13 +19,17 @@ TestFunctionalForm(
 \arguments{
 \item{DF}{data.frame object}
 
-\item{yvar}{Name of Outcome variable in df}
+\item{idvar}{Name variable indicating group or id in DF}
 
-\item{tvar}{Name Time variable in df}
+\item{yvar}{Name of Outcome variable in DF}
+
+\item{tvar}{Name Time variable in DF}
 
 \item{treatmentvar}{Name of Binary variable in df indicating treatment/control group}
 
 \item{nbins}{A scalar indicating the Number of bins for the support of Outcome. Default nbins=100}
+
+\item{nboot}{Number of bootstrap for iDensityTest. Default nboot=1000}
 
 \item{starting_year}{The Baseline period for DID. Default min(tvar)}
 
@@ -53,5 +59,5 @@ treated<-c(replicate(N,0),treat)
 ID<-c(id,id)
 df<-data.frame(panel_id,ID,year,y,D,treated)
 df<-df\%>\%dplyr::filter((0 <= y) & (y <= 500000))
-TestFunctionalForm(df,y,year,D,1000)
+TestFunctionalForm(df,"ID","y","year","D",100,1000)
 }

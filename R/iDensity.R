@@ -2,21 +2,21 @@ iDensity <-function(DF=NULL,
                     starting_year=NULL,
                     ending_year=NULL){
 
-  df1<-DF #Data frame resulting from iDiscretize()
+  df2<-DF #Data frame resulting from iDiscretize()
   if (is.null(starting_year)) {
-    sy<-min(df1$year)
+    sy<-min(df2$year)
   } else {
     sy<-starting_year
   }
   if (is.null(ending_year)) {
-    ey<-max(df1$year)
+    ey<-max(df2$year)
   } else {
     ey<-ending_year
   }
 
   #Compute Density by year-treatment-bin
   long_summary_table <-
-    df1 %>%
+    df2 %>%
     dplyr::group_by(year, D, level) %>%
     dplyr::summarise(count = dplyr::n(), .groups = "keep") %>%
     dplyr::group_by(D, year) %>%

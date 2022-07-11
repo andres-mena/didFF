@@ -14,5 +14,8 @@ Imports:
     ggthemes,
     glue,
     grid,
+    latex2exp,
     magrittr,
+    MASS,
+    purrr,
     tidyr
