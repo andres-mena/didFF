@@ -1,7 +1,7 @@
 lf_moment_inequality_test <-
   function(muhat,
            Sigmahat,
-           numSims = 1000,
+           numSims = 10^5,
            seed = NULL){
     if (is.null(seed)) {
       s<-Sys.time()

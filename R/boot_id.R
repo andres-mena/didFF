@@ -14,7 +14,7 @@ boot_id<-function(DF=NULL, idvar="id", seed=NULL){
     bootstrap_DF <-
       dplyr::left_join(statesDF, DF,
                 by = c("bootstrap_id" = idvar)) %>%
-      dplyr::rename(idvar = statenum_bootstrap)
+      dplyr::rename(id = statenum_bootstrap)
 
     return(bootstrap_DF)
   }#Compute n out of n bootstrap sampling with replacement

@@ -10,10 +10,15 @@ TestFunctionalForm(
   yvar = "output",
   tvar = "time",
   treatmentvar = "treatment group",
-  nbins = 100,
-  nboot = 1000,
+  weight = NULL,
+  scale = NULL,
+  nbins = NULL,
+  nboots = 1000,
+  seed = 0,
   starting_year = NULL,
-  ending_year = NULL
+  ending_year = NULL,
+  minbin = NULL,
+  maxbin = NULL
 )
 }
 \arguments{
@@ -27,37 +32,27 @@ TestFunctionalForm(
 
 \item{treatmentvar}{Name of Binary variable in df indicating treatment/control group}
 
+\item{weight}{Name weighting variable. Default is NULL}
+
+\item{scale}{Name scale variable. Default is NULL}
+
 \item{nbins}{A scalar indicating the Number of bins for the support of Outcome. Default nbins=100}
 
-\item{nboot}{Number of bootstrap for iDensityTest. Default nboot=1000}
+\item{nboots}{Number of bootstrap samples for iDensityTest. Default nboots=1000}
+
+\item{seed}{Starting seed for iDensityTest. Default is random.}
 
 \item{starting_year}{The Baseline period for DID. Default min(tvar)}
 
 \item{ending_year}{The follow up period for DID. Default max(tvar)}
+
+\item{minbin}{Minimun outcome-bin for density estimation. Default minbin=NULL}
+
+\item{maxbin}{Maximun outcome-bin for density estimation. Default maxbin=NULL}
 }
 \value{
-A plot of the implied density under the null
+A plot of the implied density under the null and pval for H0= Implied Density>0
 }
 \description{
 Test if Parallel trends assumption is sensitive to functional form
-}
-\examples{
-set.seed(99)
-N=10000
-treat<-rbinom(N,1,0.25)
-wage<-rlnorm(N, 13, 2)
-id<-as.character(seq(1:N))
-t0<-replicate(N,2010)
-t1<-replicate(N,2020)
-y0<-wage+rnorm(N,0,100)
-y1<- y0 + 20*treat + rnorm(N,0,100)
-panel_id=c(paste(id,t0,sep="_"),paste(id,t1,sep="_"))
-year<-c(t0,t1)
-y<-c(y0,y1)
-D<-c(treat,treat)
-treated<-c(replicate(N,0),treat)
-ID<-c(id,id)
-df<-data.frame(panel_id,ID,year,y,D,treated)
-df<-df\%>\%dplyr::filter((0 <= y) & (y <= 500000))
-TestFunctionalForm(df,"ID","y","year","D",100,1000)
 }

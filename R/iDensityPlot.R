@@ -1,13 +1,25 @@
-iDensityPlot <- function(DF=NULL){
-  iDensitytabla<-DF #data.frame resulting from iDensity()
-  sy<-sub("_0","",colnames(iDensitytabla)[2]) #Starting year
-  ey<-sub("_0","",colnames(iDensitytabla)[4]) #Ending year
+iDensityPlot <- function(DF=NULL,
+                         starting_year=NULL,
+                         ending_year=NULL){
+  plotTable<-DF #data.frame resulting from iDensity()
+
+  if (is.null(starting_year)) {
+    sy<-sub("_0","",colnames(plotTable)[2]) #Starting year
+  } else {
+    sy<-starting_year
+  }
+  if (is.null(ending_year)) {
+    ey<-sub("_0","",colnames(plotTable)[ncol(DF)]) #Ending yearplot1
+  } else {
+    ey<-ending_year
+  }
+
+
+
 
   #Generate basic plot
-  plot <- iDensitytabla%>%
-    dplyr::mutate(Outcome = level) %>%
-    dplyr::mutate(`Implied Density` = ifelse(implied_density_post < 0,
-                                             "Negative", "Non-negative")) %>%
+
+  plot<-plotTable%>%
     ggplot2::ggplot(ggplot2::aes(x=Outcome,
                         y = implied_density_post,
                         fill = `Implied Density`)) +

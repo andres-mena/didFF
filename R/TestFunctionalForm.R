@@ -8,63 +8,74 @@
 #' @param starting_year The Baseline period for DID. Default min(tvar)
 #' @param ending_year The follow up period for DID. Default max(tvar)
 #' @param idvar Name variable indicating group or id in DF
-#' @param nboot Number of bootstrap for iDensityTest. Default nboot=1000
+#' @param weight Name weighting variable. Default is NULL
+#' @param scale Name scale variable. Default is NULL
+#' @param nboots Number of bootstrap samples for iDensityTest. Default nboots=1000
+#' @param seed Starting seed for iDensityTest. Default is random.
+#' @param minbin Minimun outcome-bin for density estimation. Default minbin=NULL
+#' @param maxbin Maximun outcome-bin for density estimation. Default maxbin=NULL
 #'
-#' @return A plot of the implied density under the null
+#' @return A plot of the implied density under the null and pval for H0= Implied Density>0
 #' @export
 #'
 #' @examples
-#'set.seed(99)
-#'N=10000
-#'treat<-rbinom(N,1,0.25)
-#'wage<-rlnorm(N, 13, 2)
-#'id<-as.character(seq(1:N))
-#'t0<-replicate(N,2010)
-#'t1<-replicate(N,2020)
-#'y0<-wage+rnorm(N,0,100)
-#'y1<- y0 + 20*treat + rnorm(N,0,100)
-#'panel_id=c(paste(id,t0,sep="_"),paste(id,t1,sep="_"))
-#'year<-c(t0,t1)
-#'y<-c(y0,y1)
-#'D<-c(treat,treat)
-#'treated<-c(replicate(N,0),treat)
-#'ID<-c(id,id)
-#'df<-data.frame(panel_id,ID,year,y,D,treated)
-#'df<-df%>%dplyr::filter((0 <= y) & (y <= 500000))
-#'TestFunctionalForm(df,"ID","y","year","D",100,1000)
+
 
 TestFunctionalForm<-function(DF=NULL,
                              idvar = "id",
                              yvar = "output",
                              tvar= "time",
                              treatmentvar = "treatment group",
-                             nbins=100,
-                             nboot=1000,
+                             weight=NULL,
+                             scale=NULL,
+                             nbins=NULL,
+                             nboots=1000,
+                             seed=0,
                              starting_year=NULL,
-                             ending_year=NULL){
+                             ending_year=NULL,
+                             minbin = NULL,
+                             maxbin = NULL
+                             ){
 
 
-  df1<-iDiscretize(DF,idvar,yvar,tvar,treatmentvar,nbins)
+  df1<-iDiscretize(DF,idvar,yvar,tvar,treatmentvar,weight,scale,nbins)
 
   implied_density_table<-iDensity(df1,starting_year,ending_year)
+  if (is.null(minbin)) {
+    min<-base::min(implied_density_table$level)
+  } else {
+    min<-minbin
+  }
 
-  implied_density_plot <- iDensityPlot(implied_density_table)
+  if (is.null(maxbin)) {
+    max<-base::max(implied_density_table$level)
+  } else {
+    max<-maxbin
+  }
+  plotTable <- implied_density_table%>%
+    dplyr::filter(min <= level, level <= max)%>%
+    dplyr::mutate(Outcome = level) %>%
+    dplyr::mutate(`Implied Density` = ifelse(implied_density_post < 0,
+                                             "Negative", "Non-negative"))
 
-  pval <- iDensityTest(DF,idvar,yvar,tvar,treatmentvar,nbins,nboot,starting_year,ending_year)
+  implied_density_plot <- iDensityPlot(plotTable,starting_year,ending_year)
 
+  pval <- iDensityTest(DF,idvar,yvar,tvar,treatmentvar,weight,scale,nbins,nboots,seed,starting_year,ending_year)
+
+  rpval<-round(pval,3)
   H0_text = latex2exp::TeX("\\textbf{$H_0$} \\textbf{: Implied Density} \\textbf{$\\geq 0$}")
-  pval_text= latex2exp::TeX(paste("\\textbf{p-value <", pval,"}"))
+  pval_text= latex2exp::TeX(paste("\\textbf{p-value <",rpval,"}"))
 
 
   plot<-implied_density_plot +
     ggplot2::annotate(geom = 'text',
-             x = base::mean(implied_density_table$level)+stats::sd(implied_density_table$implied_density_post),
-             y = base::max(implied_density_table$implied_density_post),
+             x = base::mean(plotTable$level)+stats::sd(plotTable$implied_density_post),
+             y = base::max(plotTable$implied_density_post),
              label = H0_text,
              hjust = 0) +
     ggplot2::annotate(geom = 'text',
-             x = base::mean(implied_density_table$level)+stats::sd(implied_density_table$implied_density_post),
-             y = base::max(implied_density_table$implied_density_post)-stats::sd(implied_density_table$implied_density_post)/5,
+             x = base::mean(plotTable$level)+stats::sd(implied_density_table$implied_density_post),
+             y = base::max(plotTable$implied_density_post)-stats::sd(plotTable$implied_density_post)/3,
              label = pval_text,
              hjust = 0) +
     ggplot2::xlab(yvar)
@@ -73,3 +84,4 @@ TestFunctionalForm<-function(DF=NULL,
 
 
 }
+

@@ -3,20 +3,23 @@ iDensityTest <- function(DF=NULL,
                                      yvar="outcome",
                                      tvar="year",
                                      treatmentvar="treatment",
-                                     nbins=100,
-                                     numBootstrapDraws = 1000,
+                                      weight=NULL,
+                                      scale=NULL,
+                                     nbins=NULL,
+                                     nboots = 1000,
+                                      seed=NULL,
                                      starting_year=NULL,
                                      ending_year=NULL
                                      ){
-  df1<-iDiscretize(DF,idvar, yvar, tvar, treatmentvar, nbins)
-  data<-df1 #A data.frame coming from iDiscretize
+  df1<-iDiscretize(DF,idvar, yvar, tvar, treatmentvar, weight, scale, nbins)
+  data2<-df1 #A data.frame coming from iDiscretize
 
   #Compute the implied density on actual data
-  implied_density_post_df <- iDensity(data, starting_year, ending_year)
+  implied_density_post_df <- iDensity(data2, starting_year, ending_year)
 
   #Compute the implied_density for each bootstrap draw
-  bootStrapResults <- purrr::map_dfr(.x=1:numBootstrapDraws,
-                                     .f = ~iDensity(boot_id(data,"id",.x),
+  bootStrapResults <- purrr::map_dfr(.x=1:nboots,
+                                     .f = ~iDensity(boot_id(data2,"id",.x),
                                                     starting_year,
                                                     ending_year
                                                     )%>%
@@ -36,7 +39,8 @@ iDensityTest <- function(DF=NULL,
   # #This function tests that all moments are <=0, so we reverse the sign of the implied densities
       p_value <- lf_moment_inequality_test(muhat = -implied_density_post_df$implied_density_post,
                                            Sigmahat = sigma,
-                                           numSims = dim(sigma)[1])
+                                           numSims = 10^5,
+                                           seed=seed)
 
   return(p_value)
 }
