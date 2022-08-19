@@ -5,13 +5,12 @@
 #' @param tvar Name Time variable in DF
 #' @param treatmentvar Name of Binary variable in df indicating treatment/control group
 #' @param nbins A scalar indicating the Number of bins for the support of Outcome. Default nbins=100
-#' @param starting_year The Baseline period for DID. Default min(tvar)
-#' @param ending_year The follow up period for DID. Default max(tvar)
+#' @param start_t The Baseline period for DID. Default min(tvar)
+#' @param end_t The follow up period for DID. Default max(tvar)
 #' @param idvar Name variable indicating group or id in DF
 #' @param weight Name weighting variable. Default is NULL
-#' @param scale Name scale variable. Default is NULL
 #' @param nboots Number of bootstrap samples for iDensityTest. Default nboots=1000
-#' @param seed Starting seed for iDensityTest. Default is random.
+#' @param seed Starting seed for iDensityTest. Default is seed=0, set seed=NULL for random seed.
 #' @param minbin Minimun outcome-bin for density estimation. Default minbin=NULL
 #' @param maxbin Maximun outcome-bin for density estimation. Default maxbin=NULL
 #'
@@ -19,52 +18,63 @@
 #' @export
 #'
 #' @examples
+#' set.seed(99)
+#' N=10000
+#' treat<-rbinom(N,1,0.25)
+#' wage<-rlnorm(N, 13, 2)
+#' id<-as.character(seq(1:N))
+#' t0<-replicate(N,2010)
+#' t1<-replicate(N,2020)
+#' y0<-wage+rnorm(N,0,100)
+#' y1<- y0 + 20*treat + rnorm(N,0,100)
+#' panel_id=c(paste(id,t0,sep="_"),paste(id,t1,sep="_"))
+#' year<-c(t0,t1)
+#' y<-c(y0,y1)
+#' D<-c(treat,treat)
+#' treated<-c(replicate(N,0),treat)
+#' ID<-c(id,id)
+#' df<-data.frame(panel_id,ID,year,y,D,treated)
+#' df<-df%>%
+#'dplyr::filter((0 <= y) & (y <= 500000))
+#' TestFunctionalForm(df,"ID","y","year","treated", nbins=100)
 
 
 TestFunctionalForm<-function(DF=NULL,
                              idvar = "id",
                              yvar = "output",
-                             tvar= "time",
+                             tvar= "timevar",
                              treatmentvar = "treatment group",
                              weight=NULL,
-                             scale=NULL,
                              nbins=NULL,
                              nboots=1000,
                              seed=0,
-                             starting_year=NULL,
-                             ending_year=NULL,
+                             start_t=NULL,
+                             end_t=NULL,
                              minbin = NULL,
                              maxbin = NULL
                              ){
 
 
-  df1<-iDiscretize(DF,idvar,yvar,tvar,treatmentvar,weight,scale,nbins)
+  df1<-iDiscretize(DF,idvar,yvar,tvar,treatmentvar,weight,nbins)
 
-  implied_density_table<-iDensity(df1,starting_year,ending_year)
-  if (is.null(minbin)) {
-    min<-base::min(implied_density_table$level)
-  } else {
-    min<-minbin
-  }
+  implied_density_table<-iDensity(df1,start_t,end_t)
+  if(is.null(minbin)){min<-base::min(implied_density_table$level)}
+  else {min<-minbin}
 
-  if (is.null(maxbin)) {
-    max<-base::max(implied_density_table$level)
-  } else {
-    max<-maxbin
-  }
-  plotTable <- implied_density_table%>%
-    dplyr::filter(min <= level, level <= max)%>%
-    dplyr::mutate(Outcome = level) %>%
-    dplyr::mutate(`Implied Density` = ifelse(implied_density_post < 0,
-                                             "Negative", "Non-negative"))
+  if(is.null(maxbin)){max<-base::max(implied_density_table$level)}
+  else {max<-maxbin}
 
-  implied_density_plot <- iDensityPlot(plotTable,starting_year,ending_year)
+  plotTable <- iplotTable(implied_density_table,min,max)
 
-  pval <- iDensityTest(DF,idvar,yvar,tvar,treatmentvar,weight,scale,nbins,nboots,seed,starting_year,ending_year)
+  implied_density_plot <- iDensityPlot(plotTable,start_t,end_t)
+
+  pval <- iDensityTest(DF,idvar,yvar,tvar,treatmentvar,weight,nbins,nboots,seed,start_t,end_t)
 
   rpval<-round(pval,3)
   H0_text = latex2exp::TeX("\\textbf{$H_0$} \\textbf{: Implied Density} \\textbf{$\\geq 0$}")
-  pval_text= latex2exp::TeX(paste("\\textbf{p-value <",rpval,"}"))
+  if(pval<0.01){
+  pval_text= latex2exp::TeX(paste("\\textbf{p-value <","0.01","}"))}
+  else{pval_text= latex2exp::TeX(paste("\\textbf{p-value =",rpval,"}"))}
 
 
   plot<-implied_density_plot +

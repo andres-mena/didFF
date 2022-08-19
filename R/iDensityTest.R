@@ -4,24 +4,23 @@ iDensityTest <- function(DF=NULL,
                                      tvar="year",
                                      treatmentvar="treatment",
                                       weight=NULL,
-                                      scale=NULL,
                                      nbins=NULL,
                                      nboots = 1000,
                                       seed=NULL,
-                                     starting_year=NULL,
-                                     ending_year=NULL
+                                     start_t=NULL,
+                                     end_t=NULL
                                      ){
-  df1<-iDiscretize(DF,idvar, yvar, tvar, treatmentvar, weight, scale, nbins)
+  df1<-iDiscretize(DF,idvar, yvar, tvar, treatmentvar, weight,nbins)
   data2<-df1 #A data.frame coming from iDiscretize
 
   #Compute the implied density on actual data
-  implied_density_post_df <- iDensity(data2, starting_year, ending_year)
+  implied_density_post_df <- iDensity(data2, start_t, end_t)
 
   #Compute the implied_density for each bootstrap draw
   bootStrapResults <- purrr::map_dfr(.x=1:nboots,
                                      .f = ~iDensity(boot_id(data2,"id",.x),
-                                                    starting_year,
-                                                    ending_year
+                                                    start_t,
+                                                    end_t
                                                     )%>%
                                        dplyr::mutate(nboot = .x))
   # #Compute the covariance matrix of moments over the bootstrap draws

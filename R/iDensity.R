@@ -1,17 +1,17 @@
 iDensity <-function(DF=NULL,
-                    starting_year=NULL,
-                    ending_year=NULL){
+                    start_t=NULL,
+                    end_t=NULL){
 
   df2<-DF #Data frame resulting from iDiscretize()
-  if (is.null(starting_year)) {
+  if (is.null(start_t)) {
     sy<-min(df2$year)
   } else {
-    sy<-starting_year
+    sy<-start_t
   }
-  if (is.null(ending_year)) {
+  if (is.null(end_t)) {
     ey<-max(df2$year)
   } else {
-    ey<-ending_year
+    ey<-end_t
   }
 
 #Compare pre post
@@ -27,8 +27,10 @@ iDensity <-function(DF=NULL,
   long_summary_table <-
     compare_pre_post %>%
     dplyr::group_by(year, level, treated_in_period) %>%
-    dplyr::summarise(idensity = Hmisc::wtd.mean(iscale, w = w), .groups = "keep")
-
+    dplyr::summarise(count = sum(w), .groups = "keep") %>%
+    dplyr::group_by(year,treated_in_period) %>%
+    dplyr::mutate(idensity = prop.table(count)) %>%
+    dplyr::select(-count)
 
   #Reshape wide so that each row is wage-bin and each column is a year-by-treatment-status
   wide_summary_table <-

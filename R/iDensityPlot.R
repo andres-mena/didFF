@@ -1,17 +1,17 @@
 iDensityPlot <- function(DF=NULL,
-                         starting_year=NULL,
-                         ending_year=NULL){
+                         start_t=NULL,
+                         end_t=NULL){
   plotTable<-DF #data.frame resulting from iDensity()
 
-  if (is.null(starting_year)) {
+  if (is.null(start_t)) {
     sy<-sub("_0","",colnames(plotTable)[2]) #Starting year
   } else {
-    sy<-starting_year
+    sy<-start_t
   }
-  if (is.null(ending_year)) {
+  if (is.null(end_t)) {
     ey<-sub("_0","",colnames(plotTable)[ncol(DF)]) #Ending yearplot1
   } else {
-    ey<-ending_year
+    ey<-end_t
   }
 
 
