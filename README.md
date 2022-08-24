@@ -37,7 +37,9 @@ p.11)](https://jonathandroth.github.io/assets/files/2010.04814.pdf). We
 use data from [Cengiz et
 al. (2019)](https://doi.org/10.1093/qje/qjz014), who compile panel data
 on state-level minimum wages and employment-to-population ratios in
-25-cents wage-bins. \## Loading the package and the data
+25-cents wage-bins.
+
+## Loading the package and the data
 
 ``` r
 library(TestFunctionalForm) #load the TestFunctional Form package
@@ -87,9 +89,11 @@ value for moment inequalities that assumes all of the moments have mean
 we are able to reject the null hypothesis that all of the implied
 densities are positive (p\<0.001). We thus reject the null of parallel
 trends of CDFs in this context, which in turn implies that parallel
-trends cannot hold for all monotonic transformations of the outcome. \##
-Testing Functional Form for DiD between 2010 and 2015 By contrast,
-results using the period 2010-2015 shows that the estimated
+trends cannot hold for all monotonic transformations of the outcome.
+
+## Testing Functional Form for DiD between 2010 and 2015
+
+By contrast, results using the period 2010-2015 shows that the estimated
 counterfactual distribution has positive density nearly everywhere, and
 we cannot formally reject the hypothesis that it is positive everywhere
 (p=0.293). This does not necessarily imply that parallel trends holds
