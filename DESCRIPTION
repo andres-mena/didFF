@@ -3,7 +3,7 @@ Title: Test if Parallel Trends is Sensitive to Functional Form
 Version: 0.0.0.9000
 Authors@R: 
     person("Jon", "Roth", , "jonathndr@gmail.com", role = c("aut", "cre"))
-Description: Estimates the implied density under the null-hypothesis that paralall trends assumptions for DID estimations is not sensitive to functional form of the outcome.
+Description: Estimates the implied density under the null-hypothesis that paralell trends assumptions for DID estimations is not sensitive to functional form of the outcome.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -19,3 +19,7 @@ Imports:
     MASS,
     purrr,
     tidyr
+Depends: 
+    R (>= 2.10)
+LazyData: true
+LazyDataCompression:xz

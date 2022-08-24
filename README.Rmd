@@ -18,7 +18,12 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of TestFunctionalForm is to test if Paralalell trends assumptions is sensitive to functional form of the potential outcomes.    
+The TestFunctionalForm R package assesses when the validity of difference-in-differences and related estimators depends on functional form, based on the theoretical results in [Roth and Sant’Anna (2022)](https://jonathandroth.github.io/assets/files/2010.04814.pdf). This condition for parallel trends
+to be insensitive to functional form is satisfied if and essentially only if the population
+can be partitioned into a subgroup for which treatment is effectively randomly assigned
+and a remaining subgroup for which the distribution of untreated potential outcomes
+is stable over time. This package provides a test for the insensitivity of parallel
+trends to functional form by estimating the implied density of potential outcomes and checking if its negative at some point.     
 
 ## Installation
 
@@ -31,25 +36,50 @@ devtools::install_github("amenabrown/TestFunctionalForm")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
-
+We now provide and example of how to use the package by re-creating the Empirical Illustration in [Roth and Sant’Anna (2022, p.11)](https://jonathandroth.github.io/assets/files/2010.04814.pdf). We
+use data from [Cengiz et al. (2019)](https://doi.org/10.1093/qje/qjz014), who compile panel data on state-level minimum wages and employment-to-population ratios in 25-cents wage-bins.
+## Loading the package and the data
 ```{r example}
-library(TestFunctionalForm)
+library(TestFunctionalForm) #load the TestFunctional Form package
+df<-TestFunctionalForm::Cengiz_df #load Cengiz et al. (2019) data frame
 ## basic example code
 ```
-
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
-
-```{r cars}
-summary(cars)
+## Testing Functional Form for DiD between 2007 and 2015  
+Our pre-treatment period is 2007, our post-treatment period is 2015, and the treatment is whether a state raised its minimum wage at any point between the pre-treatment and post-treatment periods. The outcome of interest is individual wages Wi (where Wi=0 if i is not working). We are going to test if DiD is sentitive to functional form of the outcome between periods 2007 and 2015.
+```{r 2007-2015}
+TestFunctionalForm(DF=df,
+                                  idvar="statenum", 
+                                  yvar="wagebins",  
+                                  tvar="year", 
+                                  treatmentvar = "treated", 
+                                  weight = "w", 
+                                  nboots = 1000, 
+                                  seed=0, 
+                                  start_t=2007, 
+                                  end_t=2015, 
+                                  minbin=500, 
+                                  maxbin=2999
+                   )
 ```
-
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/v1/examples>.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
+The plot shows the implied counterfactual density under parallel trends of distributions. The figure shows that the implied density is negative for wages between approximately $5-7/hour. Using a bootstrap at the state level for computing variance-covariance matrix of the density and then compare the minimum studentized value to a “least-favorable” critical value for moment inequalities that assumes all of the moments have mean 0 (see, e.g., Section 4.1.1 of [Canay and Shaikh (2017)](https://www.econstor.eu/bitstream/10419/130095/1/846741482.pdf)) we are able to reject the null hypothesis that all of the implied densities are positive (p<0.001). We thus reject the null of parallel trends of CDFs in this context, which in turn implies that parallel trends cannot hold for all monotonic transformations of the outcome.
+## Testing Functional Form for DiD between 2010 and 2015
+By contrast, results using the period 2010-2015 shows that the estimated counterfactual distribution has
+positive density nearly everywhere, and we cannot formally reject the hypothesis that it is
+positive everywhere (p=0.293). This does not necessarily imply that parallel trends holds
+for all transformations of the outcome, but insensitivity to functional form is not rejected by
+the data in this example.
+```{r 2010-2015}
+TestFunctionalForm(DF=df,
+                                  idvar="statenum", 
+                                  yvar="wagebins",  
+                                  tvar="year", 
+                                  treatmentvar = "treated", 
+                                  weight = "w", 
+                                  nboots = 1000, 
+                                  seed=0, 
+                                  start_t=2010, 
+                                  end_t=2015, 
+                                  minbin=500, 
+                                  maxbin=2999
+                   )
 ```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
