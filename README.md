@@ -10,14 +10,9 @@ The TestFunctionalForm R package assesses when the validity of
 difference-in-differences and related estimators depends on functional
 form, based on the theoretical results in [Roth and Sant’Anna
 (2022)](https://jonathandroth.github.io/assets/files/2010.04814.pdf).
-This condition for parallel trends to be insensitive to functional form
-is satisfied if and essentially only if the population can be
-partitioned into a subgroup for which treatment is effectively randomly
-assigned and a remaining subgroup for which the distribution of
-untreated potential outcomes is stable over time. This package provides
-a test for the insensitivity of parallel trends to functional form by
-estimating the implied density of potential outcomes and checking if its
-negative at some point.
+This package provides a test for the insensitivity of parallel trends to
+functional form by estimating the implied density of potential outcomes
+and checking if its significantly below zero at some point.
 
 ## Installation
 
@@ -44,7 +39,6 @@ on state-level minimum wages and employment-to-population ratios in
 ``` r
 library(TestFunctionalForm) #load the TestFunctional Form package
 df<-TestFunctionalForm::Cengiz_df #load Cengiz et al. (2019) data frame
-## basic example code
 ```
 
 ## Testing Functional Form for DiD between 2007 and 2015
@@ -53,7 +47,7 @@ Our pre-treatment period is 2007, our post-treatment period is 2015, and
 the treatment is whether a state raised its minimum wage at any point
 between the pre-treatment and post-treatment periods. The outcome of
 interest is individual wages Wi (where Wi=0 if i is not working). We are
-going to test if DiD is sentitive to functional form of the outcome
+going to test if DiD is sensitive to functional form of the outcome
 between periods 2007 and 2015.
 
 ``` r
