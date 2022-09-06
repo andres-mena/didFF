@@ -16,8 +16,8 @@ didFF(
   seed = 0,
   start_t = NULL,
   end_t = NULL,
-  minbin = NULL,
-  maxbin = NULL
+  lb_graph = NULL,
+  ub_graph = NULL
 )
 }
 \arguments{
@@ -43,9 +43,9 @@ didFF(
 
 \item{end_t}{The follow up period for DID. Default max(tvar)}
 
-\item{minbin}{Minimun outcome-bin for density estimation. Default minbin=NULL}
+\item{lb_graph}{Minimun outcome-bin for density estimation. Default lb_graph=NULL}
 
-\item{maxbin}{Maximun outcome-bin for density estimation. Default maxbin=NULL}
+\item{ub_graph}{Maximun outcome-bin for density estimation. Default ub_graph=NULL}
 }
 \value{
 A plot of the implied density under the null and pval for H0= Implied Density>0

@@ -11,8 +11,8 @@
 #' @param weight Name weighting variable. Default is NULL
 #' @param nboots Number of bootstrap samples for iDensityTest. Default nboots=1000
 #' @param seed Starting seed for iDensityTest. Default is seed=0, set seed=NULL for random seed.
-#' @param minbin Minimun outcome-bin for density estimation. Default minbin=NULL
-#' @param maxbin Maximun outcome-bin for density estimation. Default maxbin=NULL
+#' @param lb_graph Minimun outcome-bin for density estimation. Default lb_graph=NULL
+#' @param ub_graph Maximun outcome-bin for density estimation. Default ub_graph=NULL
 #'
 #' @return A plot of the implied density under the null and pval for H0= Implied Density>0
 #' @export
@@ -50,19 +50,19 @@ didFF<-function(DF=NULL,
                              seed=0,
                              start_t=NULL,
                              end_t=NULL,
-                             minbin = NULL,
-                             maxbin = NULL
+                             lb_graph = NULL,
+                             ub_graph = NULL
                              ){
 
 
   df1<-iDiscretize(DF,idvar,yvar,tvar,treatmentvar,weight,nbins)
 
   implied_density_table<-iDensity(df1,start_t,end_t)
-  if(is.null(minbin)){min<-base::min(implied_density_table$level)}
-  else {min<-minbin}
+  if(is.null(lb_graph)){min<-base::min(implied_density_table$level)}
+  else {min<-lb_graph}
 
-  if(is.null(maxbin)){max<-base::max(implied_density_table$level)}
-  else {max<-maxbin}
+  if(is.null(ub_graph)){max<-base::max(implied_density_table$level)}
+  else {max<-ub_graph}
 
   plotTable <- iplotTable(implied_density_table,min,max)
 
