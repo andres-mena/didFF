@@ -1,12 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# TestFunctionalForm
+# didFF
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The TestFunctionalForm R package assesses when the validity of
+The didFF R package assesses when the validity of
 difference-in-differences and related estimators depends on functional
 form, based on the theoretical results in [Roth and Sant’Anna
 (2022)](https://jonathandroth.github.io/assets/files/2010.04814.pdf).
@@ -17,15 +17,15 @@ at some point.
 
 ## Installation
 
-You can install the development version of TestFunctionalForm from
+You can install the development version of didFF from
 [GitHub](https://github.com/) with:
 
 ``` r
 #Install the devtools package if not already installed
 # install.packages("devtools")
 
-#Install the TestFunctionalForm package using devtools
-devtools::install_github("amenabrown/TestFunctionalForm")
+#Install the didFF package using devtools
+devtools::install_github("amenabrown/didFF")
 ```
 
 ## Example
@@ -39,8 +39,8 @@ p.11)](https://jonathandroth.github.io/assets/files/2010.04814.pdf).
 We first load the package and the data.
 
 ``` r
-library(TestFunctionalForm) #load the TestFunctional Form package
-mw_df<-TestFunctionalForm::mw_df #load Cengiz et al. (2019) data frame
+library(didFF) #load the TestFunctional Form package
+mw_df<-didFF::mw_df #load Cengiz et al. (2019) data frame
 ```
 
 The data is derived from the dataset compiled by [Cengiz et
@@ -69,12 +69,12 @@ measured in levels, logs, percentiles, etc. We first consider an
 analysis where the pre-treatment period is 2007, the post-treatment
 period is 2015, and the treatment is whether a state raised its minimum
 wage at any point between the pre-treatment and post-treatment periods.
-(By default, TestFunctionalForm considers a unit to be treated in a
-given window if it is treated at any point between the provided start
-and end years.) We call TestFunctionalForm as follows:
+(By default, didFF considers a unit to be treated in a given window if
+it is treated at any point between the provided start and end years.) We
+call didFF as follows:
 
 ``` r
-TestFunctionalForm(
+didFF(
   DF=mw_df,
   idvar="statenum", #panel id is state 
   yvar="wage",  #outcome is wage
@@ -95,15 +95,17 @@ TestFunctionalForm(
 
 <img src="man/figures/README-2007-2015-1.png" width="100%" />
 
-The plot shows the implied counterfactual density if parallel trends
-holds for all functional forms of the outcome, which Roth and Sant’Anna
-show is equivalent to “parallel trends of distributions”. (To preserve
-reasonable scaling, we use the options minbin and maxbin so that the
-plot shows only wages above 5 and below 30). The figure shows that the
-implied density is negative for wages between approximately $5-7/hour.
-The plot also shows a p-value for the null hypothesis that parallel
-trends holds for all functional forms (this is calculated using a
-“least-favorable” critical value for moment inequalities, as in, e.g.,
+The plot shows the implied counterfactual density for the treated group
+if parallel trends holds for all functional forms of the outcome, which
+Roth and Sant’Anna show is equivalent to “parallel trends of
+distributions”. (To preserve reasonable scaling, we use the options
+minbin and maxbin so that the plot shows only wages above 5 and below
+30). The figure shows that the implied density is negative for wages
+between approximately $5-7/hour.
+
+The plot also shows a formal p-value for the null hypothesis that
+parallel trends holds for all functional forms (this is calculated using
+a “least-favorable” critical value for moment inequalities, as in, e.g.,
 Section 4.1.1 of [Canay and Shaikh
 (2017)](https://www.econstor.eu/bitstream/10419/130095/1/846741482.pdf)).
 The test shows that we are able to reject the null hypothesis that all
@@ -120,7 +122,7 @@ for all transformations of the outcome, but insensitivity to functional
 form is not rejected by the data in this example.
 
 ``` r
-TestFunctionalForm(DF=mw_df,
+didFF(DF=mw_df,
                    idvar="statenum", #panel id is state 
                    yvar="wage",  #outcome is wage
                    tvar="year", #time period is year

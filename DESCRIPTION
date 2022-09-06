@@ -1,4 +1,4 @@
-Package: TestFunctionalForm
+Package: didFF
 Title: Test if Parallel Trends is Sensitive to Functional Form
 Version: 0.0.0.9000
 Authors@R: 

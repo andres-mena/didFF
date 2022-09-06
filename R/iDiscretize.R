@@ -41,4 +41,4 @@ if (is.null(nbins)){
   df1<-data.frame(id,bin,level,y,year,D,w)
 
   return(df1)
-} #Discretize the support of y for density estimation and return a df ready for TestFunctionalForm
+} #Discretize the support of y for density estimation and return a df ready for didFF
