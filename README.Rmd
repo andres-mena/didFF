@@ -57,7 +57,7 @@ head(mw_df, 5)
 We will now test whether a DiD analysis for the effect of the minimum wage on wages (weighted by population) is insensitive to functional form -- i.e. that parallel trends is valid regardless of whether wages are measured in levels, logs, percentiles, etc. We first consider an analysis where the pre-treatment period is 2007, the post-treatment period is 2015, and the treatment is whether a state raised its minimum wage at any point between the pre-treatment and post-treatment periods. (By default, didFF considers a unit to be treated in a given window if it is treated at any point between the provided start and end years.) We call didFF as follows:
 
 ```{r 2007-2015}
-didFF(
+test_2007_2015<-didFF(
   DF=mw_df,
   idvar="statenum", #panel id is state 
   yvar="wage",  #outcome is wage
@@ -66,10 +66,10 @@ didFF(
   weight = "pop", #weight by population in each bin
   start_t=2007, #pre-treatment year 
   end_t=2015,  #post-treatment year
-  minbin=5, 
-  maxbin=29.99
+  lb_graph=5, 
+  ub_graph=29.99
 )
-
+test_2007_2015$plot
 ```
 
 The plot shows the implied counterfactual density for the treated group if parallel trends holds for all functional forms of the outcome, which Roth and Sant'Anna show is equivalent to "parallel trends of distributions". (To preserve reasonable scaling, we use the options minbin and maxbin so that the plot shows only wages above 5 and below 30). The figure shows that the implied density is negative for wages between approximately \$5-7/hour.
@@ -81,7 +81,7 @@ The plot also shows a formal p-value for the null hypothesis that parallel trend
 By contrast, results using the period 2010-2015 shows that the estimated counterfactual distribution has positive density nearly everywhere, and we cannot formally reject the hypothesis that it is positive everywhere (p=0.293). This does not necessarily imply that parallel trends holds for all transformations of the outcome, but insensitivity to functional form is not rejected by the data in this example.
 
 ```{r 2010-2015}
-didFF(DF=mw_df,
+test_2010_2015<-didFF(DF=mw_df,
                    idvar="statenum", #panel id is state 
                    yvar="wage",  #outcome is wage
                    tvar="year", #time period is year
@@ -89,8 +89,8 @@ didFF(DF=mw_df,
                    weight = "pop", #weight by population in each bin 
                    start_t=2010, #pre-treatment year 
                    end_t=2015,  #post-treatment year
-                   minbin=5, 
-                   maxbin=29.99
+                   lb_graph=5, 
+                   ub_graph=29.99
 )
-
+test_2010_2015$plot
 ```

@@ -74,7 +74,7 @@ it is treated at any point between the provided start and end years.) We
 call didFF as follows:
 
 ``` r
-didFF(
+test_2007_2015<-didFF(
   DF=mw_df,
   idvar="statenum", #panel id is state 
   yvar="wage",  #outcome is wage
@@ -83,14 +83,10 @@ didFF(
   weight = "pop", #weight by population in each bin
   start_t=2007, #pre-treatment year 
   end_t=2015,  #post-treatment year
-  minbin=5, 
-  maxbin=29.99
+  lb_graph=5, 
+  ub_graph=29.99
 )
-#> Warning in is.na(x): is.na() applied to non-(list or vector) of type
-#> 'expression'
-
-#> Warning in is.na(x): is.na() applied to non-(list or vector) of type
-#> 'expression'
+test_2007_2015$plot
 ```
 
 <img src="man/figures/README-2007-2015-1.png" width="100%" />
@@ -122,7 +118,7 @@ for all transformations of the outcome, but insensitivity to functional
 form is not rejected by the data in this example.
 
 ``` r
-didFF(DF=mw_df,
+test_2010_2015<-didFF(DF=mw_df,
                    idvar="statenum", #panel id is state 
                    yvar="wage",  #outcome is wage
                    tvar="year", #time period is year
@@ -130,14 +126,10 @@ didFF(DF=mw_df,
                    weight = "pop", #weight by population in each bin 
                    start_t=2010, #pre-treatment year 
                    end_t=2015,  #post-treatment year
-                   minbin=5, 
-                   maxbin=29.99
+                   lb_graph=5, 
+                   ub_graph=29.99
 )
-#> Warning in is.na(x): is.na() applied to non-(list or vector) of type
-#> 'expression'
-
-#> Warning in is.na(x): is.na() applied to non-(list or vector) of type
-#> 'expression'
+test_2010_2015$plot
 ```
 
 <img src="man/figures/README-2010-2015-1.png" width="100%" />

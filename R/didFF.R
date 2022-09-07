@@ -71,26 +71,30 @@ didFF<-function(DF=NULL,
   pval <- iDensityTest(DF,idvar,yvar,tvar,treatmentvar,weight,nbins,nboots,seed,start_t,end_t)
 
   rpval<-round(pval,3)
-  H0_text = latex2exp::TeX("\\textbf{$H_0$} \\textbf{: Implied Density} \\textbf{$\\geq 0$}")
+
+  H0_text = list(latex2exp::TeX("\\textbf{$H_0$} \\textbf{: Implied Density} \\textbf{$\\geq 0$}"))
+
   if(pval<0.01){
-  pval_text= latex2exp::TeX(paste("\\textbf{p-value <","0.01","}"))}
-  else{pval_text= latex2exp::TeX(paste("\\textbf{p-value =",rpval,"}"))}
+  pval_text= list(latex2exp::TeX(paste("\\textbf{p-value <","0.01","}")))}
+  else{pval_text= list(latex2exp::TeX(paste("\\textbf{p-value =",rpval,"}")))}
 
 
-  plot<-implied_density_plot +
+    plot<-implied_density_plot +
     ggplot2::annotate(geom = 'text',
              x = base::mean(plotTable$level)+stats::sd(plotTable$implied_density_post),
              y = base::max(plotTable$implied_density_post),
-             label = H0_text,
+             label = H0_text, parse=TRUE,
              hjust = 0) +
     ggplot2::annotate(geom = 'text',
              x = base::mean(plotTable$level)+stats::sd(implied_density_table$implied_density_post),
              y = base::max(plotTable$implied_density_post)-stats::sd(plotTable$implied_density_post)/3,
-             label = pval_text,
+             label = pval_text, parse=TRUE,
              hjust = 0) +
     ggplot2::xlab(yvar)
 
-  return(plot)
+  didTest<-list("plot"=plot, "table"=implied_density_table, "pval"=pval)
+
+  return(didTest)
 
 
 }
