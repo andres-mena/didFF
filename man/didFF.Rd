@@ -48,7 +48,7 @@ didFF(
 \item{ub_graph}{Maximun outcome-bin for density estimation. Default ub_graph=NULL}
 }
 \value{
-A plot of the implied density under the null and pval for H0= Implied Density>0
+A list object "list(plot,table,pval)" containing the plot of the implied density under the null, a table with the estimated and implied densities, and the pval for H0= Implied Density>0.
 }
 \description{
 Test if Parallel trends assumption is sensitive to functional form

@@ -14,7 +14,7 @@
 #' @param lb_graph Minimun outcome-bin for density estimation. Default lb_graph=NULL
 #' @param ub_graph Maximun outcome-bin for density estimation. Default ub_graph=NULL
 #'
-#' @return A plot of the implied density under the null and pval for H0= Implied Density>0
+#' @return A list object "list(plot,table,pval)" containing the plot of the implied density under the null, a table with the estimated and implied densities, and the pval for H0= Implied Density>0.
 #' @export
 #'
 #' @examples
@@ -72,11 +72,11 @@ didFF<-function(DF=NULL,
 
   rpval<-round(pval,3)
 
-  H0_text = list(latex2exp::TeX("\\textbf{$H_0$} \\textbf{: Implied Density} \\textbf{$\\geq 0$}"))
+  H0_text = list("H[0]: 'Implied Density' >= 0")
 
   if(pval<0.01){
-  pval_text= list(latex2exp::TeX(paste("\\textbf{p-value <","0.01","}")))}
-  else{pval_text= list(latex2exp::TeX(paste("\\textbf{p-value =",rpval,"}")))}
+  pval_text= list("p-value <0.01")}
+  else{ pval_text=list(paste("p-value =",rpval))}
 
 
     plot<-implied_density_plot +
@@ -88,7 +88,7 @@ didFF<-function(DF=NULL,
     ggplot2::annotate(geom = 'text',
              x = base::mean(plotTable$level)+stats::sd(implied_density_table$implied_density_post),
              y = base::max(plotTable$implied_density_post)-stats::sd(plotTable$implied_density_post)/3,
-             label = pval_text, parse=TRUE,
+             label = pval_text,
              hjust = 0) +
     ggplot2::xlab(yvar)
 
